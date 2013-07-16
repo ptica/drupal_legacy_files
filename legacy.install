@@ -1,0 +1,8 @@
+<?php
+/**
+ * @file
+ */
+
+function legacy_uninstall() {
+  variable_del('legacy_root');
+}

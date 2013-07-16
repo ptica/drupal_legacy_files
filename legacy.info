@@ -1,0 +1,9 @@
+name = Legacy files via hook_init
+description = page not found handler
+package = Redirect
+core = 7.x
+
+files[] = legacy.module
+files[] = legacy.install
+
+configure = admin/config/legacy

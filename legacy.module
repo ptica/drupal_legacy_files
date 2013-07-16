@@ -1,0 +1,78 @@
+<?php
+/* *
+ * @file
+ * The legacy module file, does file_transfer of legacy files
+ * when a menu_get_item in hook_init fails
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function legacy_menu() {
+  $items = array();
+
+  $items['admin/config/legacy'] = array(
+    'title' => 'Legacy settings',
+    'description' => 'Configure legacy files location',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('legacy_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_stream_wrappers().
+ */
+function legacy_stream_wrappers() {
+	return array(
+		'legacy' => array(
+			'name' => t('Default distribution files'),
+			'class' => 'LegacyStreamWrapper',
+			'description' => t('Provides read-only paths to legacy files.'),
+			'type' => STREAM_WRAPPERS_READ_VISIBLE,
+		),
+	);
+}
+
+/**
+ * Legacy files (legacy://) stream wrapper class.
+ */
+class LegacyStreamWrapper extends DrupalPublicStreamWrapper {
+	public function getDirectoryPath() {
+		return variable_get('legacy_root', 'sites/default/legacy');
+	}
+}
+
+function legacy_init() {
+	$url = $_GET['q'];
+	if (!menu_get_item()) {
+		$path = 'legacy://' . check_url($_GET['q']);
+		$content_type = file_get_mimetype($path); //'application/octet-stream'
+		$headers = array(
+				'Content-Type' => $content_type,
+				//http://local.drupal/'Content-Disposition' => 'attachment; filename="'.basename($path).'"',
+				'Content-Length' => filesize($path),
+		);
+		return file_transfer($path, $headers);
+	}
+}
+
+
+/**
+ * Legacy administration settings.
+ */
+function legacy_settings() {
+  $form['legacy_root'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Legacy files root path'),
+    '#description' => t('page not found handler will look into this dir - both absolute/relative path accepted'),
+    '#default_value' => 'sites/default/legacy',
+  );
+
+  return system_settings_form($form);
+}
+
