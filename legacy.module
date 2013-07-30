@@ -48,9 +48,13 @@ class LegacyStreamWrapper extends DrupalPublicStreamWrapper {
 }
 
 function legacy_init() {
-	$url = $_GET['q'];
 	if (!menu_get_item()) {
 		$path = 'legacy://' . check_url($_GET['q']);
+		//flog_it($path, 'legacy path', 'legacy_paths.log');
+		//if ($path == 'legacy://sites/all/themes/bootstrap/css/style.css') {
+		//	$e = new Exception();
+		//	flog_it($e->getTraceAsString(), 'ex', 'legacy_paths.log');
+		//}
 		$content_type = file_get_mimetype($path); //'application/octet-stream'
 		$headers = array(
 				'Content-Type' => $content_type,
@@ -70,7 +74,7 @@ function legacy_settings() {
     '#type' => 'textfield',
     '#title' => t('Legacy files root path'),
     '#description' => t('page not found handler will look into this dir - both absolute/relative path accepted'),
-    '#default_value' => 'sites/default/legacy',
+    '#default_value' => variable_get('legacy_root', 'sites/default/legacy'),
   );
 
   return system_settings_form($form);
