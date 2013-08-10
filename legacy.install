@@ -6,3 +6,16 @@
 function legacy_uninstall() {
   variable_del('legacy_root');
 }
+
+/**
+ * Implements hook_enable().
+ */
+function legacy_enable() {
+	// lets run after redirect module
+	// so redirect can redirect before us
+	db_update('system')
+	->fields(array('weight' => 1))
+	->condition('type', 'module')
+	->condition('name', 'legacy')
+	->execute();
+}

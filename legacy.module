@@ -55,6 +55,10 @@ function legacy_init() {
 		//	$e = new Exception();
 		//	flog_it($e->getTraceAsString(), 'ex', 'legacy_paths.log');
 		//}
+		
+		// TODO keep trying (index.htm, )
+		if (is_dir($path)) { $path .= '/index.html'; }
+		
 		$content_type = file_get_mimetype($path); //'application/octet-stream'
 		$headers = array(
 				'Content-Type' => $content_type,
