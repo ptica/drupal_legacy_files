@@ -51,6 +51,11 @@ function legacy_init() {
 	$url = $_GET['q'];
 	if (!menu_get_item()) {
 		$path = 'legacy://' . check_url($_GET['q']);
+		if (is_dir($path)) {
+			// check for trailing slash & force it
+			if (substr($_SERVER['REQUEST_URI'], -1) !== '/') { drupal_goto($_GET['q'] . '/'); } 
+			$path .= '/index.html'; 
+		}
 		$content_type = file_get_mimetype($path); //'application/octet-stream'
 		$headers = array(
 				'Content-Type' => $content_type,
@@ -70,7 +75,7 @@ function legacy_settings() {
     '#type' => 'textfield',
     '#title' => t('Legacy files root path'),
     '#description' => t('page not found handler will look into this dir - both absolute/relative path accepted'),
-    '#default_value' => 'sites/default/legacy',
+    '#default_value' => variable_get('legacy_root', 'sites/default/legacy'),
   );
 
   return system_settings_form($form);
