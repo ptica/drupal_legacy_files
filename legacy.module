@@ -48,7 +48,6 @@ class LegacyStreamWrapper extends DrupalPublicStreamWrapper {
 }
 
 function legacy_init() {
-	$url = $_GET['q'];
 	if (!menu_get_item()) {
 		$path = 'legacy://' . check_url($_GET['q']);
 		if (is_dir($path)) {
