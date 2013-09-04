@@ -61,7 +61,31 @@ function legacy_init() {
 				//http://local.drupal/'Content-Disposition' => 'attachment; filename="'.basename($path).'"',
 				'Content-Length' => filesize($path),
 		);
-		return file_transfer($path, $headers);
+		if (preg_match('/\.php$/', $path)) {
+			try {
+				$olddir = getcwd();
+				$dir = preg_replace('/legacy:\/\//', '', $path);
+				$dir = variable_get('legacy_root', 'sites/default/legacy') . '/' .$dir;
+				$dir = dirname($dir);
+				chdir($dir);
+				// buffer PHP output
+				ob_start();
+				// this "invokes" the legacy page and gathers its content
+				include $path;
+				// pull in the buffered content
+				$output = ob_get_contents();
+				// stop output buffering
+				ob_end_clean();
+				echo $output;
+				drupal_exit();
+				return;
+			} catch (Exception $e) {
+				// All other errors propagate up
+				throw $e;
+			}	
+		} else {
+			return file_transfer($path, $headers);
+		}
 	}
 }
 
