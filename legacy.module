@@ -56,6 +56,9 @@ function legacy_init() {
 			$path .= '/index.html'; 
 		}
 		$content_type = file_get_mimetype($path); //'application/octet-stream'
+		if (!file_exists($path)) {
+			return false;
+		}
 		$headers = array(
 				'Content-Type' => $content_type,
 				//http://local.drupal/'Content-Disposition' => 'attachment; filename="'.basename($path).'"',
