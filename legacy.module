@@ -48,7 +48,16 @@ class LegacyStreamWrapper extends DrupalPublicStreamWrapper {
 }
 
 function legacy_init() {
-	if (!menu_get_item()) {
+	// we need to check if drupal page exists
+	// or not - menu_get_item seems to do that well
+	if (menu_get_item()) {
+		// deslash drupal pages
+		if (substr($_SERVER['REQUEST_URI'], -1) === '/') { 
+			$url = rtrim($_GET['q'], '/');
+			drupal_goto($url);
+		}
+	} else {
+		// reslash legacy pages
 		$path = 'legacy://' . check_url($_GET['q']);
 		if (is_dir($path)) {
 			// check for trailing slash & force it
