@@ -52,7 +52,8 @@ function legacy_init() {
 	// or not - menu_get_item seems to do that well
 	if (menu_get_item()) {
 		// deslash drupal pages
-		if (substr($_SERVER['REQUEST_URI'], -1) === '/') { 
+		// except the front page (REQUEST_URI =='/')
+		if ($_SERVER['REQUEST_URI'] !== '/'  && substr($_SERVER['REQUEST_URI'], -1) === '/') { 
 			$url = rtrim($_GET['q'], '/');
 			drupal_goto($url);
 		}
